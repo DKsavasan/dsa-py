@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dsa.py</title>
+<meta name="description" content="A Python interview refresher: data structures and algorithms with animated, line-by-line walkthroughs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<!-- SVG filters that give the glass its liquid refraction -->
+<svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="lg-displace" x="-25%" y="-25%" width="150%" height="150%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.025" numOctaves="1" seed="7" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
+    <feDisplacementMap in="SourceGraphic" in2="soft" scale="35" xChannelSelector="R" yChannelSelector="R"/>
+  </filter>
+  <filter id="lg-displace-lg" x="-15%" y="-15%" width="130%" height="130%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.008" numOctaves="2" seed="5" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="3" result="soft"/>
+    <feDisplacementMap in="SourceGraphic" in2="soft" scale="90" xChannelSelector="R" yChannelSelector="R"/>
+  </filter>
+</svg>
+
+<div class="ambient" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="lg icon-btn side-btn" id="menuBtn" aria-label="Show or hide the topic list" aria-controls="sidebar" title="Topic list (B)">
+      <svg viewBox="0 0 20 20" width="18" height="18"><rect x="2.2" y="3.2" width="15.6" height="13.6" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.6 3.5v13" stroke="currentColor" stroke-width="1.5"/><path class="side-fill" d="M3 4.4h3.9v11.2H3z" fill="currentColor"/></svg>
+    </button>
+    <a class="brand" href="#home" aria-label="dsa.py home"><span class="brand-mark">dsa</span><span class="brand-ext">.py</span></a>
+    <nav class="lg-seg nav-tabs" id="navTabs" aria-label="Sections">
+      <a href="#home" data-tab="home">Home</a>
+      <a href="#ds" data-tab="ds" data-menu="ds" aria-haspopup="true">Data Structures<svg class="chev" viewBox="0 0 12 12" width="10" height="10"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#algo" data-tab="algo" data-menu="algo" aria-haspopup="true">Algorithms<svg class="chev" viewBox="0 0 12 12" width="10" height="10"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </nav>
+    <div class="topbar-right">
+      <button class="lg search-btn" id="searchBtn" aria-label="Search topics">
+        <svg viewBox="0 0 20 20" width="16" height="16"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="search-label">Search</span><kbd>/</kbd>
+      </button>
+      <button class="lg icon-btn" id="themeBtn" aria-label="Toggle dark mode">
+        <svg class="i-sun" viewBox="0 0 20 20" width="17" height="17"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 1.5v2.2M10 16.3v2.2M1.5 10h2.2M16.3 10h2.2M4 4l1.5 1.5M14.5 14.5L16 16M4 16l1.5-1.5M14.5 5.5L16 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 20 20" width="17" height="17"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mega" id="mega" hidden><div class="mega-card" id="megaCard"></div></div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar" aria-label="Topics">
+    <div class="side-head">
+      <div class="side-title"><span id="sideTitle">Topics</span><button class="side-close" id="sideClose" aria-label="Hide the topic list" title="Hide (B)"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <label class="filter">
+        <svg viewBox="0 0 20 20" width="14" height="14"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="1.6"/></svg>
+        <input id="filterInput" type="search" placeholder="Filter topics" autocomplete="off">
+      </label>
+    </div>
+    <div class="side-list" id="sideList"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main class="main" id="main" tabindex="-1"></main>
+</div>
+
+<div class="palette" id="palette" hidden>
+  <div class="palette-card">
+    <input id="paletteInput" type="text" placeholder="Jump to a topic… (e.g. dijkstra, heap, sliding window)" autocomplete="off">
+    <div class="palette-list" id="paletteList"></div>
+    <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+  </div>
+</div>
+
+<!-- core -->
+<script src="assets/js/core/registry.js"></script>
+<script src="assets/js/core/highlight.js"></script>
+<script src="assets/js/core/viz.js"></script>
+<script src="assets/js/core/player.js"></script>
+<!-- content (auto-generated list: run `python3 tools/build.py`) -->
+<!-- CONTENT:START -->
+<script src="assets/js/content/ds/advanced.js"></script>
+<script src="assets/js/content/ds/builtins.js"></script>
+<script src="assets/js/content/ds/builtins2.js"></script>
+<script src="assets/js/content/ds/graphs.js"></script>
+<script src="assets/js/content/ds/linear.js"></script>
+<script src="assets/js/content/ds/linked.js"></script>
+<script src="assets/js/content/ds/trees.js"></script>
+<script src="assets/js/content/algo/backtracking.js"></script>
+<script src="assets/js/content/algo/dp.js"></script>
+<script src="assets/js/content/algo/graphs.js"></script>
+<script src="assets/js/content/algo/linkedlist.js"></script>
+<script src="assets/js/content/algo/math.js"></script>
+<script src="assets/js/content/algo/searching.js"></script>
+<script src="assets/js/content/algo/searching2.js"></script>
+<script src="assets/js/content/algo/sorting.js"></script>
+<script src="assets/js/content/algo/techniques.js"></script>
+<script src="assets/js/content/algo/trees.js"></script>
+<!-- CONTENT:END -->
+<script src="assets/js/app.js"></script>
+</body>
+</html>
